@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="you_have_no_todos">You have no To-dos</string>
+    <string name="update">Update ToDo</string>
+    <string-array name="dialog_list">
+        <item>Edit</item>
+        <item>Delete</item>
+    </string-array>
+</resources>
