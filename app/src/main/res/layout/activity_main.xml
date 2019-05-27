@@ -9,7 +9,7 @@
 
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/todo_rv"
+        android:id="@+id/todoList"
         android:layout_width="368dp"
         android:layout_height="495dp"
         android:layout_marginStart="8dp"

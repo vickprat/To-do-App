@@ -14,11 +14,11 @@ abstract class TodoDatabase: RoomDatabase() {
         val databaseName = "tododatabase"
         var todoDatabase: TodoDatabase? = null
 
-        fun getInstance(context: Context): TodoDatabase? {
+        fun getInstance(context: Context): TodoDatabase {
             if (todoDatabase == null) {
                 todoDatabase = Room.databaseBuilder(context, TodoDatabase::class.java, TodoDatabase.databaseName).allowMainThreadQueries().build()
             }
-            return todoDatabase
+            return todoDatabase!!
         }
     }
 }
