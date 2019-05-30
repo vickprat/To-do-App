@@ -9,6 +9,10 @@ import android.support.v7.widget.LinearLayoutManager
 import com.example.todoapp.R
 import com.example.todoapp.data.local.TodoDatabase
 import com.example.todoapp.data.local.models.Todo
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class TodoActivity: AppCompatActivity(), TodoAdapter.OnTodoItemPressedListener {
@@ -31,10 +35,20 @@ class TodoActivity: AppCompatActivity(), TodoAdapter.OnTodoItemPressedListener {
 
     override fun onResume() {
         super.onResume()
-        todoAdapter.todoList = todoDatabase.getToDoDao().getToDoList()
-        todoList.adapter = todoAdapter
-        todoList.layoutManager = LinearLayoutManager(this)
-        todoList.hasFixedSize()
+        getToDoListFromDatabase()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                todoAdapter.todoList = result
+                todoList.adapter = todoAdapter
+                todoList.layoutManager = LinearLayoutManager(this)
+                todoList.hasFixedSize()
+            }
+    }
+
+    fun getToDoListFromDatabase(): Single<List<Todo>> {
+        return Single.fromCallable {
+            todoDatabase.getToDoDao().getToDoList()
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun onTodoItemPressed(todo: Todo) {
@@ -57,8 +71,19 @@ class TodoActivity: AppCompatActivity(), TodoAdapter.OnTodoItemPressedListener {
                     intent.putExtra("priority", todo.priority)
                     startActivity(intent)
                 } else {
-                    todoDatabase.getToDoDao().deleteToDo(todo)
-                    todoAdapter.todoList = todoDatabase.getToDoDao().getToDoList()
+                    Single.fromCallable {
+                        todoDatabase.getToDoDao().deleteToDo(todo)
+                    }.subscribeOn(Schedulers.io())
+                        .flatMap {
+                        getToDoListFromDatabase()
+                    }.observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { result ->
+                                todoAdapter.todoList = result
+                            }
+                        ) {
+                            print("Deleting/updating to do failed")
+                        }
                 }
                 dialog.dismiss()
             })

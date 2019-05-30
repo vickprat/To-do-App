@@ -16,7 +16,7 @@ abstract class TodoDatabase: RoomDatabase() {
 
         fun getInstance(context: Context): TodoDatabase {
             if (todoDatabase == null) {
-                todoDatabase = Room.databaseBuilder(context, TodoDatabase::class.java, TodoDatabase.databaseName).allowMainThreadQueries().build()
+                todoDatabase = Room.databaseBuilder(context, TodoDatabase::class.java, TodoDatabase.databaseName).build()
             }
             return todoDatabase!!
         }

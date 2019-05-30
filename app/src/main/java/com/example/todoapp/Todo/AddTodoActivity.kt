@@ -8,6 +8,10 @@ import android.widget.RadioGroup
 import com.example.todoapp.R
 import com.example.todoapp.data.local.TodoDatabase
 import com.example.todoapp.data.local.models.Todo
+import io.reactivex.Maybe
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_add_todo.*
 
 class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
@@ -31,8 +35,10 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
             add_todo.setOnClickListener{
                 val todo = Todo(title_ed.text.toString(), priority)
                 todo.detail = detail_ed.text.toString()
-                todoDatabase.getToDoDao().saveToDo(todo)
-                finish()
+                saveToDoInDatabase(todo).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ finish() }){
+                        print("Saving to do failed")
+                    }
             }
         } else {
             add_todo.text = getString(R.string.update)
@@ -42,10 +48,24 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
             add_todo.setOnClickListener{
                 val todo = Todo(title_ed.text.toString(), priority, todoId)
                 todo.detail = detail_ed.text.toString()
-                todoDatabase.getToDoDao().updateToDo(todo)
-                finish()
+                updateToDoInDatabase(todo).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ finish() }){
+                        print("Updating to do failed")
+                    }
             }
         }
+    }
+
+    fun saveToDoInDatabase(todo: Todo): Maybe<Unit> {
+        return Maybe.fromCallable {
+            todoDatabase.getToDoDao().saveToDo(todo)
+        }.subscribeOn(Schedulers.io())
+    }
+
+    fun updateToDoInDatabase(todo: Todo): Maybe<Unit> {
+        return Maybe.fromCallable {
+            todoDatabase.getToDoDao().updateToDo(todo)
+        }.subscribeOn(Schedulers.io())
     }
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
