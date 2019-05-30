@@ -26,6 +26,7 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
         radioGroup.setOnCheckedChangeListener(this)
 
         val title = intent.getStringExtra("title")
+        val detail = intent.getStringExtra("detail")
         if (title == null || title == "") {
             add_todo.setOnClickListener{
                 val todo = Todo(title_ed.text.toString(), priority)
@@ -37,6 +38,7 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
             add_todo.text = getString(R.string.update)
             val todoId = intent.getIntExtra("todoId", 0)
             title_ed.setText(title)
+            detail_ed.setText(detail)
             add_todo.setOnClickListener{
                 val todo = Todo(title_ed.text.toString(), priority, todoId)
                 todo.detail = detail_ed.text.toString()
