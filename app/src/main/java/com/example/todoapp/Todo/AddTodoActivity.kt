@@ -9,7 +9,6 @@ import com.example.todoapp.R
 import com.example.todoapp.data.local.TodoDatabase
 import com.example.todoapp.data.local.models.Todo
 import io.reactivex.Maybe
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_add_todo.*
@@ -30,7 +29,6 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
         radioGroup.setOnCheckedChangeListener(this)
 
         val title = intent.getStringExtra("title")
-        val detail = intent.getStringExtra("detail")
         if (title == null || title == "") {
             add_todo.setOnClickListener{
                 val todo = Todo(title_ed.text.toString(), priority)
@@ -41,10 +39,19 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
                     }
             }
         } else {
-            add_todo.text = getString(R.string.update)
+            val detail = intent.getStringExtra("detail")
+            val todopriority = intent.getIntExtra("priority", 1)
             val todoId = intent.getIntExtra("todoId", 0)
             title_ed.setText(title)
             detail_ed.setText(detail)
+            if (todopriority == 3) {
+                radioGroup.check(R.id.high)
+            } else if (todopriority == 2) {
+                radioGroup.check(R.id.medium)
+            } else {
+                radioGroup.check(R.id.low)
+            }
+            add_todo.text = getString(R.string.update)
             add_todo.setOnClickListener{
                 val todo = Todo(title_ed.text.toString(), priority, todoId)
                 todo.detail = detail_ed.text.toString()
