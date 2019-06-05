@@ -28,9 +28,7 @@ class TodoDatabaseTest {
     }
 
     @After
-    fun tearDown() {
-        database.close()
-    }
+    fun tearDown() = database.close()
 
     @Test
     fun should_insert_todo() {

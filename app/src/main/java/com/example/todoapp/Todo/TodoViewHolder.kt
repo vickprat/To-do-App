@@ -9,23 +9,21 @@ import com.example.todoapp.data.local.models.Todo
 
 class TodoViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-    val title: TextView = itemView.findViewById(R.id.title)
-    val first_letter: TextView = itemView.findViewById(R.id.first_letter)
-    val priority_imgView: ImageView = itemView.findViewById(R.id.priority_imgView)
+    private val title: TextView = itemView.findViewById(R.id.title)
+    private val firstLetter: TextView = itemView.findViewById(R.id.first_letter)
+    private val priorityImageView: ImageView = itemView.findViewById(R.id.priority_imgView)
 
     fun configureWith(todo: Todo) {
         title.text = todo.title
-        first_letter.text = todo.title.first().toUpperCase().toString()
-        priority_imgView.setImageResource(getImage(todo.priority))
+        firstLetter.text = todo.title.first().toUpperCase().toString()
+        priorityImageView.setImageResource(getImage(todo.priority))
     }
 
     private fun getImage(priority: Int): Int {
-        if (priority == 1) {
-            return R.drawable.low_priority
-        } else if (priority == 2) {
-            return R.drawable.medium_priority
-        } else {
-            return R.drawable.high_priority
+        when (priority) {
+            1 -> return R.drawable.low_priority
+            2 -> return R.drawable.medium_priority
+            else -> return R.drawable.high_priority
         }
     }
 }

@@ -16,8 +16,8 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
 class TodoActivity: AppCompatActivity(), TodoAdapter.OnTodoItemPressedListener {
-    lateinit var todoDatabase: TodoDatabase
-    lateinit var todoAdapter: TodoAdapter
+    private lateinit var todoDatabase: TodoDatabase
+    private lateinit var todoAdapter: TodoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,7 @@ class TodoActivity: AppCompatActivity(), TodoAdapter.OnTodoItemPressedListener {
             }
     }
 
-    fun getToDoListFromDatabase(): Single<List<Todo>> {
+    private fun getToDoListFromDatabase(): Single<List<Todo>> {
         return Single.fromCallable {
             todoDatabase.getToDoDao().getToDoList()
         }.subscribeOn(Schedulers.io())

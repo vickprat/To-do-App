@@ -67,13 +67,13 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
         }
     }
 
-    fun saveToDoInDatabase(todo: Todo): Maybe<Unit> {
+    private fun saveToDoInDatabase(todo: Todo): Maybe<Unit> {
         return Maybe.fromCallable {
             todoDatabase.getToDoDao().saveToDo(todo)
         }.subscribeOn(Schedulers.io())
     }
 
-    fun updateToDoInDatabase(todo: Todo): Maybe<Unit> {
+    private fun updateToDoInDatabase(todo: Todo): Maybe<Unit> {
         return Maybe.fromCallable {
             todoDatabase.getToDoDao().updateToDo(todo)
         }.subscribeOn(Schedulers.io())
