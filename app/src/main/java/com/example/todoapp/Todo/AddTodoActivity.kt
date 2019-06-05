@@ -31,12 +31,14 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
         val title = intent.getStringExtra("title")
         if (title == null || title == "") {
             add_todo.setOnClickListener{
-                val todo = Todo(title_ed.text.toString(), priority)
-                todo.detail = detail_ed.text.toString()
-                saveToDoInDatabase(todo).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ finish() }){
-                        print("Saving to do failed")
-                    }
+                if (title_ed.text.isNotEmpty()) {
+                    val todo = Todo(title_ed.text.toString(), priority)
+                    todo.detail = detail_ed.text.toString()
+                    saveToDoInDatabase(todo).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ finish() }) {
+                            print("Saving to do failed")
+                        }
+                }
             }
         } else {
             val detail = intent.getStringExtra("detail")
@@ -53,12 +55,14 @@ class AddTodoActivity: AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
             }
             add_todo.text = getString(R.string.update)
             add_todo.setOnClickListener{
-                val todo = Todo(title_ed.text.toString(), priority, todoId)
-                todo.detail = detail_ed.text.toString()
-                updateToDoInDatabase(todo).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ finish() }){
-                        print("Updating to do failed")
-                    }
+                if (title_ed.text.isNotEmpty()) {
+                    val todo = Todo(title_ed.text.toString(), priority, todoId)
+                    todo.detail = detail_ed.text.toString()
+                    updateToDoInDatabase(todo).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ finish() }) {
+                            print("Updating to do failed")
+                        }
+                }
             }
         }
     }
