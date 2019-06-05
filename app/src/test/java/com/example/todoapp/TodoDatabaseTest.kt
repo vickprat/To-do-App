@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import android.arch.persistence.room.Room
 import android.content.Context
 import com.example.todoapp.data.local.TodoDao
 import com.example.todoapp.data.local.TodoDatabase
@@ -16,37 +17,37 @@ import org.robolectric.annotation.Config
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
 class TodoDatabaseTest {
-    private var todoDao: TodoDao? = null
+    private lateinit var todoDao: TodoDao
+    private lateinit var database: TodoDatabase
     private var context: Context = mock(Context::class.java)
 
     @Before
     fun setup() {
-        TodoDatabase.TEST_MODE = true
-        todoDao = TodoDatabase.getInstance(context).getToDoDao()
+        database = Room.inMemoryDatabaseBuilder(context, TodoDatabase::class.java).allowMainThreadQueries().build()
+        todoDao = database.getToDoDao()
     }
 
     @After
     fun tearDown() {
-        todoDao = null
-        TodoDatabase.close()
+        database.close()
     }
 
     @Test
     fun should_insert_todo() {
         val todo = Todo(title = "ToDoTitle", priority = 1, todoId = 2)
-        todoDao?.saveToDo(todo)
-        val todoTest = todoDao?.getToDoItem(2)
-        Assert.assertEquals(todo.title, todoTest?.title)
-        Assert.assertEquals(todo.priority, todoTest?.priority)
+        todoDao.saveToDo(todo)
+        val todoTest = todoDao.getToDoItem(2)
+        Assert.assertEquals(todo.title, todoTest.title)
+        Assert.assertEquals(todo.priority, todoTest.priority)
     }
 
     @Test
     fun should_delete_todo() {
         val todo = Todo(title = "ToDoTitle", priority = 1, todoId = 3)
         val todo1 = Todo(title = "ToDoTitle", priority = 1, todoId = 4)
-        todoDao?.saveToDo(todo)
-        todoDao?.saveToDo(todo1)
-        todoDao?.deleteToDo(todo)
-        Assert.assertEquals(todoDao?.getToDoList()?.count(), 1)
+        todoDao.saveToDo(todo)
+        todoDao.saveToDo(todo1)
+        todoDao.deleteToDo(todo)
+        Assert.assertEquals(todoDao.getToDoList().count(), 1)
     }
 }
