@@ -31,7 +31,7 @@ class TodoDatabaseTest {
     fun tearDown() = database.close()
 
     @Test
-    fun should_insert_todo() {
+    fun `TodoDao should insert todo`() {
         val todo = Todo(title = "ToDoTitle", priority = 1, todoId = 2)
         todoDao.saveToDo(todo)
         val todoTest = todoDao.getToDoItem(2)
@@ -40,12 +40,23 @@ class TodoDatabaseTest {
     }
 
     @Test
-    fun should_delete_todo() {
+    fun `TodoDao should delete todo`() {
         val todo = Todo(title = "ToDoTitle", priority = 1, todoId = 3)
         val todo1 = Todo(title = "ToDoTitle", priority = 1, todoId = 4)
         todoDao.saveToDo(todo)
         todoDao.saveToDo(todo1)
         todoDao.deleteToDo(todo)
         Assert.assertEquals(todoDao.getToDoList().count(), 1)
+    }
+
+    @Test
+    fun `TodoDao should update todo`() {
+        val todo = Todo(title = "ToDoTitle", priority = 1, todoId = 3)
+        todoDao.saveToDo(todo)
+        var todoTest = todoDao.getToDoItem(todoId = 3)
+        todoTest.title = "ToDoTitleUpdated"
+        todoDao.updateToDo(todoTest)
+        var todoTestLatest = todoDao.getToDoItem(todoId = 3)
+        Assert.assertEquals(todoTestLatest.title, todoTest.title)
     }
 }
